@@ -88,6 +88,15 @@ class AreaChartFilterInput extends React.Component {
   }
 
 
+  getColor = (colorName) => {
+    if (colorName === 'valid') {
+      return (this.props.colorValid !== undefined) ? this.props.colorValid : "#56c990";
+    } else if (colorName == 'invalid') {
+      return (this.props.colorInvalid !== undefined) ? this.props.colorInvalid : "grey";
+    }
+  }
+
+
   // render --------------------------------------------------------------------
 
 
@@ -210,16 +219,16 @@ class AreaChartFilterInput extends React.Component {
     let results = {'valid': {'val': null, 'percent': null}, 'min': {'val': null, 'percent': null}, 'max': {'val': null, 'percent': null}};
     let totalNumberOfResults = distributionOfData['min']['total'] + distributionOfData['max']['total'] + distributionOfData['valid']['total'];
     if (checkIfShouldRender(fullSize, this.props.min, this.props.max)) {
-      results['valid']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])}/>}/>);
-      results['valid']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['valid']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])}/>}/>);
+      results['valid']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30}/>}/>);
     }
     if (checkIfShouldRender(fullSize, minValue, this.props.min)) {
-      results['min']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])}/>}/>);
-      results['min']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['min']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])}/>}/>);
+      results['min']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30}/>}/>);
     }
     if (checkIfShouldRender(fullSize, this.props.max, maxValue)) {
-      results['max']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])}/>}/>);
-      results['max']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['max']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])}/>}/>);
+      results['max']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30}/>}/>);
     }
     return results;
   }
@@ -238,9 +247,9 @@ class AreaChartFilterInput extends React.Component {
                data={data}
                margin={{top: 50, right: 50, left: 20, bottom: 5,}}
              >
-               <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
-               <Area type="monotone" dataKey="min-results" stroke="grey" fill="grey" isAnimationActive={false}/>
-               <Area type="monotone" dataKey="max-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="results" stroke={this.getColor('valid')} fill={this.getColor('valid')} isAnimationActive={false}/>
+               <Area type="monotone" dataKey="min-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
+               <Area type="monotone" dataKey="max-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
            </AreaChart>
          </ResponsiveContainer>
         </div>
@@ -269,8 +278,8 @@ class AreaChartFilterInput extends React.Component {
                {this.renderToolTip()}
 
                <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
-               <Area type="monotone" dataKey="min-results" stroke="grey" fill="grey" isAnimationActive={false}/>
-               <Area type="monotone" dataKey="max-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="min-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
+               <Area type="monotone" dataKey="max-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
 
                {/* Make sure to render reference lines last so they get rendered above everything else*/}
                {referenceLines['min']}

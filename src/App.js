@@ -93,6 +93,8 @@ class App extends React.Component {
             yAxisLabel="# of Results"
             xAxisLabel="Value to Filter By"
             simpleModeOn
+            colorValid='red'
+            colorInvalid='black'
           />
         </div>
       </div>
