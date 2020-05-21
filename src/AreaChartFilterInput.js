@@ -93,6 +93,10 @@ class AreaChartFilterInput extends React.Component {
       return (this.props.colorValid !== undefined) ? this.props.colorValid : "#56c990";
     } else if (colorName == 'invalid') {
       return (this.props.colorInvalid !== undefined) ? this.props.colorInvalid : "grey";
+    } else if (colorName == 'filter') {
+      return (this.props.colorFilter !== undefined) ? this.props.colorFilter : "red";
+    } else if (colorName == 'label') {
+      return (this.props.colorLabel !== undefined) ? this.props.colorLabel : "black";
     }
   }
 
@@ -104,8 +108,8 @@ class AreaChartFilterInput extends React.Component {
   renderReferenceLines = (lineType) => {
     let minLabel = "Min: " + this.props.min; // <- label of reference line
     let maxLabel = "Max: " + this.props.max;
-    let minColor = "red";                    // <- the color of the reference line
-    let maxColor = "red";
+    let minColor = this.getColor('filter');                    // <- the color of the reference line
+    let maxColor = this.getColor('filter');
     let minWidth = 2;                        // <- the width of the reference line
     let maxWidth = 2;
     if (this.state.hoveredValue !== -1) {
@@ -139,8 +143,8 @@ class AreaChartFilterInput extends React.Component {
       styling['cursor'] = 'default';
     }
     return {
-      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} ifOverflow="extendDomain" style={styling} onMouseDown={() => this.selectFilter(MIN_FILTER)} />,
-    'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} ifOverflow="extendDomain" style={styling} onMouseDown={() => this.selectFilter(MAX_FILTER)} />
+      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill={this.getColor('filter')} xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} ifOverflow="extendDomain" style={styling} onMouseDown={() => this.selectFilter(MIN_FILTER)} />,
+    'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill={this.getColor('filter')} xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} ifOverflow="extendDomain" style={styling} onMouseDown={() => this.selectFilter(MAX_FILTER)} />
     }
   }
 
@@ -219,16 +223,16 @@ class AreaChartFilterInput extends React.Component {
     let results = {'valid': {'val': null, 'percent': null}, 'min': {'val': null, 'percent': null}, 'max': {'val': null, 'percent': null}};
     let totalNumberOfResults = distributionOfData['min']['total'] + distributionOfData['max']['total'] + distributionOfData['valid']['total'];
     if (checkIfShouldRender(fullSize, this.props.min, this.props.max)) {
-      results['valid']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])}/>}/>);
-      results['valid']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['valid']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])} fill={this.getColor('label')}/>}/>);
+      results['valid']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30} fill={this.getColor('label')}/>}/>);
     }
     if (checkIfShouldRender(fullSize, minValue, this.props.min)) {
-      results['min']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])}/>}/>);
-      results['min']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['min']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])} fill={this.getColor('label')}/>}/>);
+      results['min']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30} fill={this.getColor('label')}/>}/>);
     }
     if (checkIfShouldRender(fullSize, this.props.max, maxValue)) {
-      results['max']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])}/>}/>);
-      results['max']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['max']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])} fill={this.getColor('label')}/>}/>);
+      results['max']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30} fill={this.getColor('label')}/>}/>);
     }
     return results;
   }
@@ -277,7 +281,7 @@ class AreaChartFilterInput extends React.Component {
                <YAxis type="number" width={70} label={{ value: this.props.yAxisLabel, angle: -90, position: 'left', fontSize: 25}}/>
                {this.renderToolTip()}
 
-               <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="results" stroke={this.getColor('valid')} fill={this.getColor('valid')} isAnimationActive={false}/>
                <Area type="monotone" dataKey="min-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
                <Area type="monotone" dataKey="max-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
 

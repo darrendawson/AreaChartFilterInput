@@ -82,6 +82,24 @@ class App extends React.Component {
           />
         </div>
 
+        <h1>Edit Mode Off and Custom Colors</h1>
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
+          <AreaChartFilterInput
+            data={data} min={this.state.min}
+            max={this.state.max}
+            updateFilter={this.updateFilterValue}
+            minKey='min'
+            maxKey='max'
+            yAxisLabel="# of Results"
+            xAxisLabel="Value to Filter By"
+            editModeOff
+            colorFilter='blue'
+            colorValid='blue'
+            colorInvalid='darkblue'
+            colorLabel='white'
+          />
+        </div>
+
         <h1>Simple Mode On</h1>
         <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
           <AreaChartFilterInput
