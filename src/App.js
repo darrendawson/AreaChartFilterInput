@@ -71,7 +71,8 @@ class App extends React.Component {
         <h1>Edit Mode Off</h1>
         <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
           <AreaChartFilterInput
-            data={data} min={this.state.min}
+            data={data}
+            min={this.state.min}
             max={this.state.max}
             updateFilter={this.updateFilterValue}
             minKey='min'
@@ -85,7 +86,8 @@ class App extends React.Component {
         <h1>Edit Mode Off and Custom Colors</h1>
         <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
           <AreaChartFilterInput
-            data={data} min={this.state.min}
+            data={data}
+            min={this.state.min}
             max={this.state.max}
             updateFilter={this.updateFilterValue}
             minKey='min'
@@ -103,7 +105,8 @@ class App extends React.Component {
         <h1>Simple Mode On</h1>
         <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
           <AreaChartFilterInput
-            data={data} min={this.state.min}
+            data={data}
+            min={this.state.min}
             max={this.state.max}
             updateFilter={this.updateFilterValue}
             minKey='min'

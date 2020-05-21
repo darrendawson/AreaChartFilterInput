@@ -1,10 +1,41 @@
-import React from 'react';
+// =============================================================================
+// About AreaChartFilterInput.js
+// =============================================================================
+/*
+  AreaChartFilterInput contains the <AreaChartFilterInput/> component.
+
+  Props:
+      - data={data}
+      - min={this.state.min}
+      - max={this.state.max}
+      - updateFilter={this.updateFilterValue}
+      - minKey='min'
+      - maxKey='max'
+      - yAxisLabel="# of Results"
+      - xAxisLabel="Value to Filter By"
+      - editModeOff
+      - colorFilter='blue'
+      - colorValid='blue'
+      - colorInvalid='darkblue'
+      - colorLabel='white'
+*/
+
 
 // Imports ---------------------------------------------------------------------
+import React from 'react';
 
 import {
-  AreaChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer, Label, ReferenceArea
-} from 'recharts';
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+  Label,
+} from
+ 'recharts';
 
 // Constants -------------------------------------------------------------------
 
