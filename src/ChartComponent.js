@@ -28,8 +28,8 @@ class ChartComponent extends React.Component {
 
   // the x-axis represents the value in question (# of viewers, # of followers, etc)
   // the y-axis represents the number of streamers that have that value
-  extractValueFromChart = (numStreamers, value, props) => {
-    let newValue = props.payload.value;
+  extractValueFromChart = (newValue) => {
+
     if (this.state.hoveredValue !== newValue) {
       this.setState({'hoveredValue': newValue})
     }
@@ -97,6 +97,18 @@ class ChartComponent extends React.Component {
     }
   }
 
+  // we don't want to actually render the tooltip, we just want to intercept the "value" of the x-axis label we are currently on
+  renderToolTip = () => {
+    const CustomTooltip = ({ active, payload, label }) => {
+      if (active) { this.extractValueFromChart(label); }
+      return null;
+    };
+
+    return (
+      <Tooltip content={<CustomTooltip/>}/>
+    );
+  }
+
 
   render() {
     let data = this.getFilteredData(this.props.data);
@@ -117,7 +129,7 @@ class ChartComponent extends React.Component {
              <CartesianGrid strokeDasharray="3 3" />
              <XAxis dataKey="value" />
              <YAxis />
-             <Tooltip formatter={this.extractValueFromChart}/>
+             {this.renderToolTip()}
 
              <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
              <Area type="monotone" dataKey="min-results" stroke="grey" fill="grey" isAnimationActive={false}/>
