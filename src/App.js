@@ -56,7 +56,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <h1>Edit Mode</h1>
-        <div style={{'width': '70%', 'height': '600px', 'border': '1px solid grey', 'margin-bottom': '30px'}}>
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'margin-bottom': '30px', 'flex-shrink': '0', 'flex-grow': '0'}}>
           <ChartComponent
             data={data} min={this.state.min}
             max={this.state.max}
@@ -67,8 +67,9 @@ class App extends React.Component {
             xAxisLabel="Value to Filter By"
           />
         </div>
+
         <h1>Edit Mode Off</h1>
-        <div style={{'width': '70%', 'height': '600px', 'border': '1px solid grey', 'margin-bottom': '30px'}}>
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'margin-bottom': '30px', 'flex-shrink': '0', 'flex-grow': '0'}}>
           <ChartComponent
             data={data} min={this.state.min}
             max={this.state.max}
@@ -78,6 +79,20 @@ class App extends React.Component {
             yAxisLabel="# of Results"
             xAxisLabel="Value to Filter By"
             editModeOff
+          />
+        </div>
+
+        <h1>Simple Mode On</h1>
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'margin-bottom': '30px', 'flex-shrink': '0', 'flex-grow': '0'}}>
+          <ChartComponent
+            data={data} min={this.state.min}
+            max={this.state.max}
+            updateFilter={this.updateFilterValue}
+            minKey='min'
+            maxKey='max'
+            yAxisLabel="# of Results"
+            xAxisLabel="Value to Filter By"
+            simpleModeOn
           />
         </div>
       </div>

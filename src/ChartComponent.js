@@ -228,43 +228,65 @@ class ChartComponent extends React.Component {
   // Render <ChartComponent/>
   render() {
     let [data, statsAboutData, distributionOfData] = this.getFilteredData(this.props.data);
-    let referenceLines = this.renderReferenceLines();
-    let areaLabels = this.renderAreaLabels(this.props.data, statsAboutData['min'], statsAboutData['max'], distributionOfData)
+    if (this.props.simpleModeOn) {
 
-    return (
-      <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}}>
-        {/* <p>Value: {this.state.hoveredValue}; Filter: {this.state.selectedFilter}</p> */}
-        <ResponsiveContainer width="98%" height="98%">
+      // simple mode
+      return (
+        <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+               data={data}
+               margin={{top: 50, right: 50, left: 20, bottom: 5,}}
+             >
+               <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="min-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="max-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+           </AreaChart>
+         </ResponsiveContainer>
+        </div>
+      );
 
-          <AreaChart
-             data={data}
-             margin={{top: 50, right: 50, left: 20, bottom: 5,}}
-             onMouseLeave={() => this.setState({hoveredValue: -1, selectedFilter: NO_FILTER})}
-             onMouseUp={() => this.setState({selectedFilter: NO_FILTER})}
-           >
-             <CartesianGrid strokeDasharray="3 3" />
-             <XAxis dataKey="value" height={100} label={{value: this.props.xAxisLabel, position: 'innerBottom', fontSize: 25}}/>
-             <YAxis type="number" width={70} label={{ value: this.props.yAxisLabel, angle: -90, position: 'left', fontSize: 25}}/>
-             {this.renderToolTip()}
+    } else {
 
-             <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
-             <Area type="monotone" dataKey="min-results" stroke="grey" fill="grey" isAnimationActive={false}/>
-             <Area type="monotone" dataKey="max-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+      // normal mode
+      let referenceLines = this.renderReferenceLines();
+      let areaLabels = this.renderAreaLabels(this.props.data, statsAboutData['min'], statsAboutData['max'], distributionOfData)
 
-             {/* Make sure to render reference lines last so they get rendered above everything else*/}
-             {referenceLines['min']}
-             {referenceLines['max']}
-             {areaLabels['valid']['val']}
-             {areaLabels['valid']['percent']}
-             {areaLabels['min']['val']}
-             {areaLabels['min']['percent']}
-             {areaLabels['max']['val']}
-             {areaLabels['max']['percent']}
+      return (
+        <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}}>
+          {/* <p>Value: {this.state.hoveredValue}; Filter: {this.state.selectedFilter}</p> */}
+          <ResponsiveContainer width="98%" height="98%">
 
-         </AreaChart>
-       </ResponsiveContainer>
-      </div>
-    )
+            <AreaChart
+               data={data}
+               margin={{top: 50, right: 50, left: 20, bottom: 5,}}
+               onMouseLeave={() => this.setState({hoveredValue: -1, selectedFilter: NO_FILTER})}
+               onMouseUp={() => this.setState({selectedFilter: NO_FILTER})}
+             >
+               <CartesianGrid strokeDasharray="3 3" />
+               <XAxis dataKey="value" height={100} label={{value: this.props.xAxisLabel, position: 'innerBottom', fontSize: 25}}/>
+               <YAxis type="number" width={70} label={{ value: this.props.yAxisLabel, angle: -90, position: 'left', fontSize: 25}}/>
+               {this.renderToolTip()}
+
+               <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="min-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+               <Area type="monotone" dataKey="max-results" stroke="grey" fill="grey" isAnimationActive={false}/>
+
+               {/* Make sure to render reference lines last so they get rendered above everything else*/}
+               {referenceLines['min']}
+               {referenceLines['max']}
+               {areaLabels['valid']['val']}
+               {areaLabels['valid']['percent']}
+               {areaLabels['min']['val']}
+               {areaLabels['min']['percent']}
+               {areaLabels['max']['val']}
+               {areaLabels['max']['percent']}
+
+           </AreaChart>
+         </ResponsiveContainer>
+        </div>
+      );
+    }
   }
 }
 
