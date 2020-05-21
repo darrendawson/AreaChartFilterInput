@@ -34,8 +34,7 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Label,
-} from
- 'recharts';
+} from 'recharts';
 
 // Constants -------------------------------------------------------------------
 
