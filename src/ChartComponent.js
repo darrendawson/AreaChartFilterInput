@@ -60,6 +60,7 @@ class ChartComponent extends React.Component {
 
   // render --------------------------------------------------------------------
 
+
   // lineType is either "Min" or "Max"
   renderReferenceLines = (lineType) => {
     let minLabel = "Min: " + this.props.min; // <- label of reference line
@@ -72,14 +73,27 @@ class ChartComponent extends React.Component {
       let distanceToMin = Math.abs(this.props.min - this.state.hoveredValue);
       let distanceToMax = Math.abs(this.props.max - this.state.hoveredValue);
       if (distanceToMax > distanceToMin) {
-        minWidth = 5;
+        minWidth = 6;
       } else {
-        maxWidth = 5;
+        maxWidth = 6;
       }
     }
+
+    // a custom Component for rendering the label
+    function ReferenceLabel(props) {
+      const { fill, value, viewBox } = props;
+      const x = viewBox.width + viewBox.x + props.xOffset;
+      const y = viewBox.y - 6;
+      return (
+          <text x={x} y={y} fill={fill} fontSize={17}>
+              {value}
+          </text>
+      )
+    }
+
     return {
-      'min': <ReferenceLine x={this.props.min} label={minLabel} stroke={minColor} strokeWidth={minWidth} style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MIN_FILTER})} />,
-      'max': <ReferenceLine x={this.props.max} label={maxLabel} stroke={maxColor} strokeWidth={maxWidth} style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MAX_FILTER})} />
+      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-60}/>} stroke={minColor} strokeWidth={minWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MIN_FILTER})} />,
+      'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MAX_FILTER})} />
     }
   }
 
