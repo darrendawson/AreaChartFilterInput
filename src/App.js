@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import ChartComponent from './ChartComponent';
+import AreaChartFilterInput from './AreaChartFilterInput';
 
 // Constants and Input Data ----------------------------------------------------
 
@@ -38,8 +38,8 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      'min': 4,
-      'max': 90
+      'min': 25,
+      'max': 190
     }
   }
 
@@ -56,8 +56,8 @@ class App extends React.Component {
     return (
       <div className="App">
         <h1>Edit Mode</h1>
-        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'margin-bottom': '30px', 'flex-shrink': '0', 'flex-grow': '0'}}>
-          <ChartComponent
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
+          <AreaChartFilterInput
             data={data} min={this.state.min}
             max={this.state.max}
             updateFilter={this.updateFilterValue}
@@ -69,8 +69,8 @@ class App extends React.Component {
         </div>
 
         <h1>Edit Mode Off</h1>
-        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'margin-bottom': '30px', 'flex-shrink': '0', 'flex-grow': '0'}}>
-          <ChartComponent
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
+          <AreaChartFilterInput
             data={data} min={this.state.min}
             max={this.state.max}
             updateFilter={this.updateFilterValue}
@@ -83,8 +83,8 @@ class App extends React.Component {
         </div>
 
         <h1>Simple Mode On</h1>
-        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'margin-bottom': '30px', 'flex-shrink': '0', 'flex-grow': '0'}}>
-          <ChartComponent
+        <div style={{'width': '70%', 'height': '700px', 'border': '1px solid grey', 'marginBottom': '30px', 'flexShrink': '0', 'flexGrow': '0'}}>
+          <AreaChartFilterInput
             data={data} min={this.state.min}
             max={this.state.max}
             updateFilter={this.updateFilterValue}

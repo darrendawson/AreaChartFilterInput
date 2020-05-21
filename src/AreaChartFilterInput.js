@@ -14,10 +14,10 @@ const MAX_FILTER = 2;
 
 
 // =============================================================================
-// <ChartComponent/>
+// <AreaChartFilterInput/>
 // =============================================================================
 
-class ChartComponent extends React.Component {
+class AreaChartFilterInput extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -130,8 +130,8 @@ class ChartComponent extends React.Component {
       styling['cursor'] = 'default';
     }
     return {
-      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} alwaysShow style={styling} onMouseDown={() => this.selectFilter(MIN_FILTER)} />,
-    'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} alwaysShow style={styling} onMouseDown={() => this.selectFilter(MAX_FILTER)} />
+      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} ifOverflow="extendDomain" style={styling} onMouseDown={() => this.selectFilter(MIN_FILTER)} />,
+    'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} ifOverflow="extendDomain" style={styling} onMouseDown={() => this.selectFilter(MAX_FILTER)} />
     }
   }
 
@@ -210,29 +210,29 @@ class ChartComponent extends React.Component {
     let results = {'valid': {'val': null, 'percent': null}, 'min': {'val': null, 'percent': null}, 'max': {'val': null, 'percent': null}};
     let totalNumberOfResults = distributionOfData['min']['total'] + distributionOfData['max']['total'] + distributionOfData['valid']['total'];
     if (checkIfShouldRender(fullSize, this.props.min, this.props.max)) {
-      results['valid']['val']     = (<ReferenceLine alwaysShow={true} x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])}/>}/>);
-      results['valid']['percent'] = (<ReferenceLine alwaysShow={true} x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['valid']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])}/>}/>);
+      results['valid']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30}/>}/>);
     }
     if (checkIfShouldRender(fullSize, minValue, this.props.min)) {
-      results['min']['val']     = (<ReferenceLine alwaysShow={true} x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])}/>}/>);
-      results['min']['percent'] = (<ReferenceLine alwaysShow={true} x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['min']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])}/>}/>);
+      results['min']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30}/>}/>);
     }
     if (checkIfShouldRender(fullSize, this.props.max, maxValue)) {
-      results['max']['val']     = (<ReferenceLine alwaysShow={true} x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])}/>}/>);
-      results['max']['percent'] = (<ReferenceLine alwaysShow={true} x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30}/>}/>);
+      results['max']['val']     = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])}/>}/>);
+      results['max']['percent'] = (<ReferenceLine ifOverflow="extendDomain" x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30}/>}/>);
     }
     return results;
   }
 
 
-  // Render <ChartComponent/>
+  // Render <AreaChartFilterInput/>
   render() {
     let [data, statsAboutData, distributionOfData] = this.getFilteredData(this.props.data);
     if (this.props.simpleModeOn) {
 
       // simple mode
       return (
-        <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}}>
+        <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center'}}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
                data={data}
@@ -253,7 +253,7 @@ class ChartComponent extends React.Component {
       let areaLabels = this.renderAreaLabels(this.props.data, statsAboutData['min'], statsAboutData['max'], distributionOfData)
 
       return (
-        <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}}>
+        <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center'}}>
           {/* <p>Value: {this.state.hoveredValue}; Filter: {this.state.selectedFilter}</p> */}
           <ResponsiveContainer width="98%" height="98%">
 
@@ -264,7 +264,7 @@ class ChartComponent extends React.Component {
                onMouseUp={() => this.setState({selectedFilter: NO_FILTER})}
              >
                <CartesianGrid strokeDasharray="3 3" />
-               <XAxis dataKey="value" height={100} label={{value: this.props.xAxisLabel, position: 'innerBottom', fontSize: 25}}/>
+               <XAxis dataKey="value" height={70} label={{value: this.props.xAxisLabel, position: 'insideBottom', fontSize: 25}}/>
                <YAxis type="number" width={70} label={{ value: this.props.yAxisLabel, angle: -90, position: 'left', fontSize: 25}}/>
                {this.renderToolTip()}
 
@@ -291,4 +291,4 @@ class ChartComponent extends React.Component {
 }
 
 
-export default ChartComponent;
+export default AreaChartFilterInput;
