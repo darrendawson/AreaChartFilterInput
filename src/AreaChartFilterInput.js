@@ -32,8 +32,7 @@ import {
   CartesianGrid,
   Tooltip,
   ReferenceLine,
-  ResponsiveContainer,
-  Label,
+  ResponsiveContainer
 } from 'recharts';
 
 // Constants -------------------------------------------------------------------
@@ -110,7 +109,7 @@ class AreaChartFilterInput extends React.Component {
 
       if ((stats['min'] === false) || (data[i]['value'] < stats['min'])) {
         stats['min'] = data[i]['value'];
-      } else if ((stats['max'] == false) || (data[i]['value'] > stats['max'])) {
+      } else if ((stats['max'] === false) || (data[i]['value'] > stats['max'])) {
         stats['max'] = data[i]['value'];
       }
     }
@@ -121,11 +120,11 @@ class AreaChartFilterInput extends React.Component {
   getColor = (colorName) => {
     if (colorName === 'valid') {
       return (this.props.colorValid !== undefined) ? this.props.colorValid : "#56c990";
-    } else if (colorName == 'invalid') {
+    } else if (colorName === 'invalid') {
       return (this.props.colorInvalid !== undefined) ? this.props.colorInvalid : "grey";
-    } else if (colorName == 'filter') {
+    } else if (colorName === 'filter') {
       return (this.props.colorFilter !== undefined) ? this.props.colorFilter : "red";
-    } else if (colorName == 'label') {
+    } else if (colorName === 'label') {
       return (this.props.colorLabel !== undefined) ? this.props.colorLabel : "black";
     }
   }

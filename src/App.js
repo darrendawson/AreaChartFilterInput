@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import AreaChartFilterInput from './AreaChartFilterInput';
@@ -15,7 +14,7 @@ function getRandomInt(min, max) {
 let data = [];
 let prevAmount = 1000;
 for (let i = 0; i < 500; i++) {
-  if (i % 7 == 0) {
+  if (i % 7 === 0) {
     continue;
   }
   let newAmount = prevAmount + getRandomInt(-100, 100);
@@ -46,7 +45,7 @@ class App extends React.Component {
   updateFilterValue = (value, filterType) => {
     if ((filterType === 'min') && (this.state.min !== value)) {
       this.setState({'min': value});
-    } else if ((filterType == 'max') && (this.state.max !== value)) {
+    } else if ((filterType === 'max') && (this.state.max !== value)) {
       this.setState({'max': value});
     }
   }
