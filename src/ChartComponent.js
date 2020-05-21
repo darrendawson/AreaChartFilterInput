@@ -3,7 +3,7 @@ import React from 'react';
 // Imports ---------------------------------------------------------------------
 
 import {
-  AreaChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer
+  AreaChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer, Label, ReferenceArea
 } from 'recharts';
 
 // Constants -------------------------------------------------------------------
@@ -45,16 +45,35 @@ class ChartComponent extends React.Component {
   // takes props.data and breaks it into 3 lists (filtered for being < min, filtered for being > max, and not filtered)
   getFilteredData = (data) => {
     let filtered = [];
+    let stats = {min: false, max: false}; // <- keeps track of what the min/max values in the entire dataset are
+    let distribution = {
+      'min':   {'n': 0, 'total': 0},
+      'valid': {'n': 0, 'total': 0},
+      'max':   {'n': 0, 'total': 0}
+    }
+
     for (let i = 0; i < data.length; i++) {
       if (data[i]['value'] < this.props.min) {
         filtered.push({'value': data[i]['value'], 'min-results': data[i]['results'], 'max-results': 0, 'results': 0 });
+        distribution['min']['n'] += 1;
+        distribution['min']['total'] += data[i]['results'];
       } else if (data[i]['value'] > this.props.max) {
         filtered.push({'value': data[i]['value'], 'min-results': 0, 'max-results': data[i]['results'], 'results': 0 });
+        distribution['max']['n'] += 1;
+        distribution['max']['total'] += data[i]['results'];
       } else {
         filtered.push({'value': data[i]['value'], 'min-results': 0, 'max-results': 0, 'results': data[i]['results'] });
+        distribution['valid']['n'] += 1;
+        distribution['valid']['total'] += data[i]['results'];
+      }
+
+      if ((stats['min'] === false) || (data[i]['value'] < stats['min'])) {
+        stats['min'] = data[i]['value'];
+      } else if ((stats['max'] == false) || (data[i]['value'] > stats['max'])) {
+        stats['max'] = data[i]['value'];
       }
     }
-    return filtered;
+    return [filtered, stats, distribution];
   }
 
 
@@ -110,14 +129,91 @@ class ChartComponent extends React.Component {
   }
 
 
+  // Area Labels are rendered as ReferenceLines
+  // minValue is the smallest value in the dataset, maxValue is the largest (x-axis)
+  renderAreaLabels = (data, minValue, maxValue, distributionOfData) => {
+    let centerOfMin   = minValue + (this.props.min - minValue) / 2;
+    let centerOfMax   = this.props.max + (maxValue - this.props.max) / 2;
+    let centerOfValid = this.props.min + (this.props.max - this.props.min) / 2;
+
+    // find closest values to the "center of" variables so that it will be rendered
+    let roundedValueMin = false;
+    let roundedValueMax = false;
+    let roundedValueValid = false;
+
+    // function will pick the value that's closest to the center point
+    let getNewRoundedValue = function(center, oldValue, newValue) {
+      if (oldValue === false) {
+        return newValue;
+      }
+      if (Math.abs(center - newValue) < Math.abs(center - oldValue)) {
+        return newValue;
+      }
+      return oldValue;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      let value = data[i]['value'];
+      roundedValueMin   = getNewRoundedValue(centerOfMin, roundedValueMin, value);
+      roundedValueMax   = getNewRoundedValue(centerOfMax, roundedValueMax, value);
+      roundedValueValid = getNewRoundedValue(centerOfValid, roundedValueValid, value);
+    }
+
+    // a custom Component for rendering the label
+    function ReferenceLabel(props) {
+      const { fill, value, viewBox } = props;
+      const x = viewBox.width + viewBox.x;
+      let yOffset = (props.yOffset === undefined ? 0 : props.yOffset);
+      const y = viewBox.y + viewBox.height - 16 - yOffset;
+      return (
+          <text x={x} y={y} fill={fill} fontSize={20} textAnchor="middle">
+              {value}
+          </text>
+      )
+    }
+
+
+    // determine which reference lines we should actually draw
+    // -> only if the area it's marking is >= 15% of the entire graph
+    let fullSize = maxValue - minValue;
+    let checkIfShouldRender = function(totalSize, borderLeft, borderRight) {
+      return (borderRight - borderLeft > totalSize / 8);
+    }
+
+    let getLabelTextValue = function(distributionData) {
+      return distributionData['total'].toLocaleString();
+    }
+    let getLabelTextPercent = function(distributionData, total) {
+      let percent = Math.round(distributionData['total'] / total * 100, 0);
+      return percent + "%";
+    }
+
+    let results = {'valid': {'val': null, 'percent': null}, 'min': {'val': null, 'percent': null}, 'max': {'val': null, 'percent': null}};
+    let totalNumberOfResults = distributionOfData['min']['total'] + distributionOfData['max']['total'] + distributionOfData['valid']['total'];
+    if (checkIfShouldRender(fullSize, this.props.min, this.props.max)) {
+      results['valid']['val']     = (<ReferenceLine alwaysShow={true} x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['valid'])}/>}/>);
+      results['valid']['percent'] = (<ReferenceLine alwaysShow={true} x={roundedValueValid} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['valid'], totalNumberOfResults)} yOffset={30}/>}/>);
+    }
+    if (checkIfShouldRender(fullSize, minValue, this.props.min)) {
+      results['min']['val']     = (<ReferenceLine alwaysShow={true} x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['min'])}/>}/>);
+      results['min']['percent'] = (<ReferenceLine alwaysShow={true} x={roundedValueMin} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['min'], totalNumberOfResults)} yOffset={30}/>}/>);
+    }
+    if (checkIfShouldRender(fullSize, this.props.max, maxValue)) {
+      results['max']['val']     = (<ReferenceLine alwaysShow={true} x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextValue(distributionOfData['max'])}/>}/>);
+      results['max']['percent'] = (<ReferenceLine alwaysShow={true} x={roundedValueMax} stroke="grey" strokeOpacity={0} label={<ReferenceLabel value={getLabelTextPercent(distributionOfData['max'], totalNumberOfResults)} yOffset={30}/>}/>);
+    }
+    return results;
+  }
+
   render() {
-    let data = this.getFilteredData(this.props.data);
+    let [data, statsAboutData, distributionOfData] = this.getFilteredData(this.props.data);
     let referenceLines = this.renderReferenceLines();
+    let areaLabels = this.renderAreaLabels(this.props.data, statsAboutData['min'], statsAboutData['max'], distributionOfData)
 
     return (
       <div style={{'height': '100%', 'width': '100%'}}>
         <p>Value: {this.state.hoveredValue}; Filter: {this.state.selectedFilter}</p>
-        <ResponsiveContainer width="80%" height="80%">
+        <ResponsiveContainer width="90%" height="90%">
 
           <AreaChart
              data={data}
@@ -125,10 +221,9 @@ class ChartComponent extends React.Component {
              onMouseLeave={() => this.setState({hoveredValue: -1, selectedFilter: NO_FILTER})}
              onMouseUp={() => this.setState({selectedFilter: NO_FILTER})}
            >
-
              <CartesianGrid strokeDasharray="3 3" />
-             <XAxis dataKey="value" />
-             <YAxis />
+             <XAxis dataKey="value" height={100} label={{value: this.props.xAxisLabel, position: 'innerBottom', fontSize: 25}}/>
+             <YAxis type="number" width={70} label={{ value: this.props.yAxisLabel, angle: -90, position: 'left', fontSize: 25}}/>
              {this.renderToolTip()}
 
              <Area type="monotone" dataKey="results" stroke="#56c990" fill="#56c990" isAnimationActive={false}/>
@@ -138,6 +233,13 @@ class ChartComponent extends React.Component {
              {/* Make sure to render reference lines last so they get rendered above everything else*/}
              {referenceLines['min']}
              {referenceLines['max']}
+             {areaLabels['valid']['val']}
+             {areaLabels['valid']['percent']}
+             {areaLabels['min']['val']}
+             {areaLabels['min']['percent']}
+             {areaLabels['max']['val']}
+             {areaLabels['max']['percent']}
+
          </AreaChart>
        </ResponsiveContainer>
       </div>

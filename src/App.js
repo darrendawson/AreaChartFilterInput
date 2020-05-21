@@ -53,11 +53,13 @@ class App extends React.Component {
     return (
       <div className="App">
         <ChartComponent
-          data={data} min={this.state.min} 
+          data={data} min={this.state.min}
           max={this.state.max}
           updateFilter={this.updateFilterValue}
           minKey='min'
           maxKey='max'
+          yAxisLabel="# of Results"
+          xAxisLabel="Value to Filter By"
         />
       </div>
     );
