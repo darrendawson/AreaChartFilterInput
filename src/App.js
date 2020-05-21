@@ -55,7 +55,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <div style={{'width': '70%', 'height': '70%', 'border': '1px solid grey'}}>
+        <h1>Edit Mode</h1>
+        <div style={{'width': '70%', 'height': '600px', 'border': '1px solid grey', 'margin-bottom': '30px'}}>
           <ChartComponent
             data={data} min={this.state.min}
             max={this.state.max}
@@ -64,6 +65,19 @@ class App extends React.Component {
             maxKey='max'
             yAxisLabel="# of Results"
             xAxisLabel="Value to Filter By"
+          />
+        </div>
+        <h1>Edit Mode Off</h1>
+        <div style={{'width': '70%', 'height': '600px', 'border': '1px solid grey', 'margin-bottom': '30px'}}>
+          <ChartComponent
+            data={data} min={this.state.min}
+            max={this.state.max}
+            updateFilter={this.updateFilterValue}
+            minKey='min'
+            maxKey='max'
+            yAxisLabel="# of Results"
+            xAxisLabel="Value to Filter By"
+            editModeOff
           />
         </div>
       </div>

@@ -26,6 +26,17 @@ class ChartComponent extends React.Component {
     }
   }
 
+
+  // function gets called when a user clicks on a filter reference line and starts to drag it
+  // -> this will set the selectedFilter (if in edit mode)
+  selectFilter = (filter) => {
+    if (this.props.editModeOff) { return; }
+    if (this.state.selectedFilter !== filter) {
+      this.setState({selectedFilter: filter});
+    }
+  }
+
+
   // the x-axis represents the value in question (# of viewers, # of followers, etc)
   // the y-axis represents the number of streamers that have that value
   extractValueFromChart = (newValue) => {
@@ -92,9 +103,13 @@ class ChartComponent extends React.Component {
       let distanceToMin = Math.abs(this.props.min - this.state.hoveredValue);
       let distanceToMax = Math.abs(this.props.max - this.state.hoveredValue);
       if (distanceToMax > distanceToMin) {
-        minWidth = 6;
+        if (! this.props.editModeOff) {
+          minWidth = 6;
+        }
       } else {
-        maxWidth = 6;
+        if (! this.props.editModeOff) {
+          maxWidth = 6;
+        }
       }
     }
 
@@ -110,9 +125,13 @@ class ChartComponent extends React.Component {
       )
     }
 
+    let styling = {'cursor': 'ew-resize'};
+    if (this.props.editModeOff) {
+      styling['cursor'] = 'default';
+    }
     return {
-      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MIN_FILTER})} />,
-      'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MAX_FILTER})} />
+      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} alwaysShow style={styling} onMouseDown={() => this.selectFilter(MIN_FILTER)} />,
+    'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} alwaysShow style={styling} onMouseDown={() => this.selectFilter(MAX_FILTER)} />
     }
   }
 
