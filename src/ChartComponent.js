@@ -104,14 +104,14 @@ class ChartComponent extends React.Component {
       const x = viewBox.width + viewBox.x + props.xOffset;
       const y = viewBox.y - 6;
       return (
-          <text x={x} y={y} fill={fill} fontSize={17}>
+          <text x={x} y={y} fill={fill} fontSize={22}>
               {value}
           </text>
       )
     }
 
     return {
-      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-60}/>} stroke={minColor} strokeWidth={minWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MIN_FILTER})} />,
+      'min': <ReferenceLine x={this.props.min} label={<ReferenceLabel value={minLabel} fill='red' xOffset={-90}/>} stroke={minColor} strokeWidth={minWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MIN_FILTER})} />,
       'max': <ReferenceLine x={this.props.max} label={<ReferenceLabel value={maxLabel} fill='red' xOffset={5}/>} stroke={maxColor} strokeWidth={maxWidth} alwaysShow style={{'cursor': 'ew-resize'}} onMouseDown={() => this.setState({'selectedFilter': MAX_FILTER})} />
     }
   }
@@ -166,7 +166,7 @@ class ChartComponent extends React.Component {
       let yOffset = (props.yOffset === undefined ? 0 : props.yOffset);
       const y = viewBox.y + viewBox.height - 16 - yOffset;
       return (
-          <text x={x} y={y} fill={fill} fontSize={20} textAnchor="middle">
+          <text x={x} y={y} fill={fill} fontSize={22} textAnchor="middle">
               {value}
           </text>
       )
@@ -177,7 +177,7 @@ class ChartComponent extends React.Component {
     // -> only if the area it's marking is >= 15% of the entire graph
     let fullSize = maxValue - minValue;
     let checkIfShouldRender = function(totalSize, borderLeft, borderRight) {
-      return (borderRight - borderLeft > totalSize / 8);
+      return (borderRight - borderLeft > totalSize / 9);
     }
 
     let getLabelTextValue = function(distributionData) {
@@ -205,19 +205,21 @@ class ChartComponent extends React.Component {
     return results;
   }
 
+
+  // Render <ChartComponent/>
   render() {
     let [data, statsAboutData, distributionOfData] = this.getFilteredData(this.props.data);
     let referenceLines = this.renderReferenceLines();
     let areaLabels = this.renderAreaLabels(this.props.data, statsAboutData['min'], statsAboutData['max'], distributionOfData)
 
     return (
-      <div style={{'height': '100%', 'width': '100%'}}>
-        <p>Value: {this.state.hoveredValue}; Filter: {this.state.selectedFilter}</p>
-        <ResponsiveContainer width="90%" height="90%">
+      <div style={{'height': '100%', 'width': '100%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}}>
+        {/* <p>Value: {this.state.hoveredValue}; Filter: {this.state.selectedFilter}</p> */}
+        <ResponsiveContainer width="98%" height="98%">
 
           <AreaChart
              data={data}
-             margin={{top: 20, right: 50, left: 20, bottom: 5,}}
+             margin={{top: 50, right: 50, left: 20, bottom: 5,}}
              onMouseLeave={() => this.setState({hoveredValue: -1, selectedFilter: NO_FILTER})}
              onMouseUp={() => this.setState({selectedFilter: NO_FILTER})}
            >

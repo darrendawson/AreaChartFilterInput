@@ -14,7 +14,10 @@ function getRandomInt(min, max) {
 
 let data = [];
 let prevAmount = 1000;
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 500; i++) {
+  if (i % 7 == 0) {
+    continue;
+  }
   let newAmount = prevAmount + getRandomInt(-100, 100);
   if (newAmount < 0) {
     newAmount = 0;
@@ -52,15 +55,17 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <ChartComponent
-          data={data} min={this.state.min}
-          max={this.state.max}
-          updateFilter={this.updateFilterValue}
-          minKey='min'
-          maxKey='max'
-          yAxisLabel="# of Results"
-          xAxisLabel="Value to Filter By"
-        />
+        <div style={{'width': '70%', 'height': '70%', 'border': '1px solid grey'}}>
+          <ChartComponent
+            data={data} min={this.state.min}
+            max={this.state.max}
+            updateFilter={this.updateFilterValue}
+            minKey='min'
+            maxKey='max'
+            yAxisLabel="# of Results"
+            xAxisLabel="Value to Filter By"
+          />
+        </div>
       </div>
     );
   }
