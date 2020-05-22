@@ -84,6 +84,7 @@ class App extends React.Component {
             colorValid='blue'
             colorInvalid='darkblue'
             colorLabel='white'
+            colorHover='darkblue'
           />
         </div>
 

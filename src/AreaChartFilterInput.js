@@ -51,6 +51,7 @@ class AreaChartFilterInput extends React.Component {
     super();
     this.state = {
       hoveredValue: -1,
+      hoveredAmount: -1,
       selectedFilter: NO_FILTER
     }
   }
@@ -67,11 +68,11 @@ class AreaChartFilterInput extends React.Component {
 
 
   // the x-axis represents the value in question (# of viewers, # of followers, etc)
-  // the y-axis represents the number of streamers that have that value
-  extractValueFromChart = (newValue) => {
+  // the y-axis represents the number of items that have that value
+  extractValueFromChart = (newValue, newAmount) => {
 
     if (this.state.hoveredValue !== newValue) {
-      this.setState({'hoveredValue': newValue})
+      this.setState({'hoveredValue': newValue, 'hoveredAmount': newAmount});
     }
 
     // If the user is dragging a filter, update the value
@@ -126,6 +127,8 @@ class AreaChartFilterInput extends React.Component {
       return (this.props.colorFilter !== undefined) ? this.props.colorFilter : "red";
     } else if (colorName === 'label') {
       return (this.props.colorLabel !== undefined) ? this.props.colorLabel : "black";
+    } else if (colorName === 'hover') {
+      return (this.props.colorHover !== undefined) ? this.props.colorHover : "grey";
     }
   }
 
@@ -134,7 +137,7 @@ class AreaChartFilterInput extends React.Component {
 
 
   // lineType is either "Min" or "Max"
-  renderReferenceLines = (lineType) => {
+  renderFilterLines = (lineType) => {
     let minLabel = "Min: " + this.props.min; // <- label of reference line
     let maxLabel = "Max: " + this.props.max;
     let minColor = this.getColor('filter');                    // <- the color of the reference line
@@ -180,7 +183,14 @@ class AreaChartFilterInput extends React.Component {
   // we don't want to actually render the tooltip, we just want to intercept the "value" of the x-axis label we are currently on
   renderToolTip = () => {
     const CustomTooltip = ({ active, payload, label }) => {
-      if (active) { this.extractValueFromChart(label); }
+      if (active) {
+        if (payload.length > 0) {
+          let a = payload[0]['payload'];
+          let xAxisValue = label;
+          let yAxisValue = a['results'] + a['min-results'] + a['max-results']; // since 2 of these will always be 0, we can add them safely
+          this.extractValueFromChart(xAxisValue, yAxisValue);
+        }
+      }
       return null;
     };
 
@@ -267,6 +277,30 @@ class AreaChartFilterInput extends React.Component {
   }
 
 
+  // a ReferenceLine that shows what value the user is currently hovering over
+  renderHoverValueReferenceLine = () => {
+    if (this.state.hoveredValue === -1) { return; }
+
+    // a custom Component for rendering the label
+    function ReferenceLabel(props) {
+      const { fill, value, viewBox } = props;
+      const x = viewBox.width + viewBox.x;
+      const y = viewBox.y + 25;
+      return (
+          <text x={x} y={y} fill={fill} fontSize={17} textAnchor="middle">
+              {value}
+          </text>
+      )
+    }
+
+    let labelText = "(" + this.state.hoveredValue + ", " + this.state.hoveredAmount + ")";
+    return (
+      <ReferenceLine x={this.state.hoveredValue} stroke={this.getColor('hover')} label={<ReferenceLabel value={labelText} fill={this.getColor('hover')}/>}/>
+    );
+  }
+
+
+
   // Render <AreaChartFilterInput/>
   render() {
     let [data, statsAboutData, distributionOfData] = this.getFilteredData(this.props.data);
@@ -291,7 +325,7 @@ class AreaChartFilterInput extends React.Component {
     } else {
 
       // normal mode
-      let referenceLines = this.renderReferenceLines();
+      let filterLines = this.renderFilterLines();
       let areaLabels = this.renderAreaLabels(this.props.data, statsAboutData['min'], statsAboutData['max'], distributionOfData)
 
       return (
@@ -315,8 +349,9 @@ class AreaChartFilterInput extends React.Component {
                <Area type="monotone" dataKey="max-results" stroke={this.getColor('invalid')} fill={this.getColor('invalid')} isAnimationActive={false}/>
 
                {/* Make sure to render reference lines last so they get rendered above everything else*/}
-               {referenceLines['min']}
-               {referenceLines['max']}
+               {this.renderHoverValueReferenceLine()}
+               {filterLines['min']}
+               {filterLines['max']}
                {areaLabels['valid']['val']}
                {areaLabels['valid']['percent']}
                {areaLabels['min']['val']}
